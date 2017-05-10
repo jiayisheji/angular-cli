@@ -9,6 +9,7 @@ import { pluginArgs, postcssArgs } from '../../tasks/eject';
 
 const cssnano = require('cssnano');
 const postcssUrl = require('postcss-url');
+const postcssCssnext = require('postcss-cssnext')
 const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -57,6 +58,14 @@ export function getStylesConfig(wco: WebpackConfigOptions) {
     };
 
     return [
+      postcssCssnext({
+        "autoprefixer": {
+          "browsers": "ie >= 10, ..."
+        },
+        features: {
+          rem: false
+        }
+      }),
       postcssUrl({
         url: (URL: string) => {
           // Only convert root relative URLs, which CSS-Loader won't process into require().
@@ -77,8 +86,7 @@ export function getStylesConfig(wco: WebpackConfigOptions) {
             return `/${baseHref}/${deployUrl}/${URL}`.replace(/\/\/+/g, '/');
           }
         }
-      }),
-      autoprefixer(),
+      })
     ].concat(
         minimizeCss ? [cssnano(minimizeOptions)] : []
     );
